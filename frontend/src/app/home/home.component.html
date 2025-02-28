@@ -15,6 +15,12 @@
     >
       <fa-icon [icon]="faPlus"></fa-icon>
     </button>
+    <mat-card-actions>
+      <button mat-raised-button color="warn" (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        Sair
+      </button>
+    </mat-card-actions>
   </div>
 
   <div *ngIf="items.length === 0" class="empty-state">
