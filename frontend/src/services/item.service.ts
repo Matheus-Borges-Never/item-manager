@@ -1,62 +1,123 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { getAuth } from 'firebase/auth';
 import { Item } from '../models/item.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ItemService {
-  private items: Item[] = [];
-  private itemsSubject = new BehaviorSubject<Item[]>([]);
+  private apiUrl = 'http://localhost:3000/items';
 
-  constructor() {
-    const savedItems = localStorage.getItem('items');
-    if (savedItems) {
-      this.items = JSON.parse(savedItems).map((item: any) => ({
-        ...item,
-        createdAt: new Date(item.createdAt),
-      }));
-      this.itemsSubject.next([...this.items]);
-    }
-  }
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
 
   getItems(): Observable<Item[]> {
-    return this.itemsSubject.asObservable();
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      map((items) => items.map((item) => this.mapToItem(item))),
+      catchError(this.handleError<Item[]>('getItems', []))
+    );
   }
 
   getItemById(id: string): Observable<Item | undefined> {
-    const item = this.items.find((item) => item.id === id);
-    return of(item);
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<any>(url).pipe(
+      map((item) => this.mapToItem(item)),
+      catchError(this.handleError<Item>('getItemById'))
+    );
   }
 
-  addItem(item: Omit<Item, 'id' | 'createdAt'>): void {
-    const newItem: Item = {
-      ...item,
-      id: Date.now().toString(),
-      createdAt: new Date(),
-    };
+  addItem(item: any): Observable<Item> {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-    this.items.push(newItem);
-    this.itemsSubject.next([...this.items]);
-    this.saveToLocalStorage();
-  }
-
-  updateItem(id: string, updatedItem: Partial<Item>): void {
-    const index = this.items.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      this.items[index] = { ...this.items[index], ...updatedItem };
-      this.itemsSubject.next([...this.items]);
-      this.saveToLocalStorage();
+    if (!user) {
+      this.snackBar.open('Usuário não autenticado!', 'Fechar', {
+        duration: 3000,
+      });
+      return throwError(() => new Error('Usuário não autenticado'));
     }
+
+    if (!item.name || !item.description) {
+      this.snackBar.open('Preencha todos os campos!', 'Fechar', {
+        duration: 3000,
+      });
+      return throwError(() => new Error('Preencha todos os campos'));
+    }
+
+    return this.http.post<any>(this.apiUrl, item).pipe(
+      map((response) => this.mapToItem(response)),
+      tap(() => {
+        this.snackBar.open('Item criado com sucesso!', 'Fechar', {
+          duration: 3000,
+        });
+      }),
+      catchError(this.handleError<Item>('addItem'))
+    );
   }
 
-  deleteItem(id: string): void {
-    this.items = this.items.filter((item) => item.id !== id);
-    this.itemsSubject.next([...this.items]);
-    this.saveToLocalStorage();
+  updateItem(id: string, item: any): Observable<Item> {
+    const url = `${this.apiUrl}/${id}`;
+
+    return this.http.patch<any>(url, item).pipe(
+      map((response) => this.mapToItem(response)),
+      tap(() => {
+        this.snackBar.open('Item atualizado com sucesso!', 'Fechar', {
+          duration: 3000,
+        });
+      }),
+      catchError(this.handleError<Item>('updateItem'))
+    );
   }
 
-  private saveToLocalStorage(): void {
-    localStorage.setItem('items', JSON.stringify(this.items));
+  deleteItem(id: string): Observable<void> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<void>(url).pipe(
+      tap(() => {
+        this.snackBar.open('Item excluído com sucesso!', 'Fechar', {
+          duration: 3000,
+        });
+      }),
+      catchError(this.handleError<void>('deleteItem'))
+    );
+  }
+
+  private mapToItem(data: any): Item {
+    return {
+      id: data.id || data._id,
+      name: data.name || data.nome,
+      description: data.description || data.descricao,
+      imageUrl: data.imageUrl || data.foto || '',
+      createdAt: data.createdAt || data.criadoEm || new Date(),
+    };
+  }
+
+  private dataURItoBlob(dataURI: string): Blob {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: mimeString });
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} falhou: ${error.message}`);
+
+      this.snackBar.open(
+        `Erro ao ${operation}: ${error.error?.message || error.message}`,
+        'Fechar',
+        { duration: 5000 }
+      );
+
+      return of(result as T);
+    };
   }
 }

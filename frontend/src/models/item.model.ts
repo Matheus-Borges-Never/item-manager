@@ -2,6 +2,6 @@ export interface Item {
   id: string;
   name: string;
   description: string;
-  imageUrl: string;
+  imageUrl?: string;
   createdAt: Date;
 }

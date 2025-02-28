@@ -1,4 +1,4 @@
-import { Component, type OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
@@ -44,6 +44,7 @@ export class HomeComponent implements OnInit {
   faPlus = faPlus;
   faEye = faEye;
   userName = '';
+  isLoading = false;
 
   constructor(
     private router: Router,
@@ -57,13 +58,24 @@ export class HomeComponent implements OnInit {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.userName = user.displayName || 'Usuário';
+        this.loadItems();
       } else {
         this.router.navigate(['/login']);
       }
     });
+  }
 
-    this.itemService.getItems().subscribe((items) => {
-      this.items = items;
+  loadItems() {
+    this.isLoading = true;
+    this.itemService.getItems().subscribe({
+      next: (items) => {
+        this.items = items;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar itens:', error);
+        this.isLoading = false;
+      },
     });
   }
 
@@ -101,11 +113,13 @@ export class HomeComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.itemService.deleteItem(id);
-        this.snackBar.open('Item excluído com sucesso!', 'Fechar', {
-          duration: 3000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
+        this.itemService.deleteItem(id).subscribe({
+          next: () => {
+            this.loadItems();
+          },
+          error: (error: any) => {
+            console.error('Erro ao excluir item:', error);
+          },
         });
       }
     });

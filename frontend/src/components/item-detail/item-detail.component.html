@@ -1,35 +1,40 @@
-<div class="detail-container" *ngIf="item">
+<div class="detail-container">
   <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{ item.name }}</mat-card-title>
-      <mat-card-subtitle>Criado em {{ formatDate(item.createdAt) }}</mat-card-subtitle>
-    </mat-card-header>
-    
-    <div class="item-image-container" *ngIf="item.imageUrl">
-      <img [src]="item.imageUrl" alt="{{ item.name }}" class="item-image">
-    </div>
-    
-    <mat-card-content>
-      <mat-divider></mat-divider>
-      <div class="description-section">
-        <h3>Descrição</h3>
-        <p>{{ item.description }}</p>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+    <ng-container *ngIf="item">
+      <mat-card-header>
+        <mat-card-title>{{ item.name }}</mat-card-title>
+        <mat-card-subtitle
+          >Criado em {{ formatDate(item.createdAt) }}</mat-card-subtitle
+        >
+      </mat-card-header>
+
+      <div class="item-image-container" *ngIf="item.imageUrl">
+        <img [src]="item.imageUrl" alt="{{ item.name }}" class="item-image" />
       </div>
-    </mat-card-content>
-    
-    <mat-card-actions>
-      <button mat-button color="primary" (click)="goBack()">
-        <fa-icon [icon]="faArrowLeft"></fa-icon> Voltar
-      </button>
-      <div class="action-buttons">
-        <button mat-raised-button color="accent" (click)="editItem()">
-          <fa-icon [icon]="faEdit"></fa-icon> Editar
+
+      <mat-card-content>
+        <mat-divider></mat-divider>
+        <div class="description-section">
+          <h3>Descrição</h3>
+          <p>{{ item.description }}</p>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="goBack()">
+          <fa-icon [icon]="faArrowLeft"></fa-icon> Voltar
         </button>
-        <button mat-raised-button color="warn" (click)="deleteItem()">
-          <fa-icon [icon]="faTrash"></fa-icon> Excluir
-        </button>
-      </div>
-    </mat-card-actions>
+        <div class="action-buttons">
+          <button mat-raised-button color="accent" (click)="editItem()">
+            <fa-icon [icon]="faEdit"></fa-icon> Editar
+          </button>
+          <button mat-raised-button color="warn" (click)="deleteItem()">
+            <fa-icon [icon]="faTrash"></fa-icon> Excluir
+          </button>
+        </div>
+      </mat-card-actions>
+    </ng-container>
   </mat-card>
 </div>
-

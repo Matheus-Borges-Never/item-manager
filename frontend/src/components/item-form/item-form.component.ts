@@ -76,21 +76,28 @@ export class ItemFormComponent implements OnInit {
 
   loadItem(id: string): void {
     this.isLoading = true;
-    this.itemService.getItemById(id).subscribe((item) => {
-      if (item) {
-        this.itemForm.patchValue({
-          name: item.name,
-          description: item.description,
-          imageUrl: item.imageUrl,
-        });
-        this.imagePreview = item.imageUrl;
-      } else {
-        this.snackBar.open('Item não encontrado!', 'Fechar', {
-          duration: 3000,
-        });
-        this.router.navigate(['/items']);
-      }
-      this.isLoading = false;
+    this.itemService.getItemById(id).subscribe({
+      next: (item) => {
+        if (item) {
+          this.itemForm.patchValue({
+            name: item.name,
+            description: item.description,
+            imageUrl: item.imageUrl,
+          });
+          this.imagePreview = item.imageUrl || null;
+        } else {
+          this.snackBar.open('Item não encontrado!', 'Fechar', {
+            duration: 3000,
+          });
+          this.router.navigate(['/home']);
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar item:', error);
+        this.isLoading = false;
+        this.router.navigate(['/home']);
+      },
     });
   }
 
@@ -116,25 +123,32 @@ export class ItemFormComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     const itemData = this.itemForm.value;
 
     if (this.isEditMode && this.itemId) {
-      this.itemService.updateItem(this.itemId, itemData);
-      this.snackBar.open('Item atualizado com sucesso!', 'Fechar', {
-        duration: 3000,
-        horizontalPosition: 'end',
-        verticalPosition: 'top',
+      this.itemService.updateItem(this.itemId, itemData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.router.navigate(['/home']);
+        },
+        error: (error): any => {
+          console.error('Erro ao atualizar item:', error);
+          this.isLoading = false;
+        },
       });
     } else {
-      this.itemService.addItem(itemData);
-      this.snackBar.open('Item criado com sucesso!', 'Fechar', {
-        duration: 3000,
-        horizontalPosition: 'end',
-        verticalPosition: 'top',
+      this.itemService.addItem(itemData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.router.navigate(['/home']);
+        },
+        error: (error: any) => {
+          console.error('Erro ao criar item:', error);
+          this.isLoading = false;
+        },
       });
     }
-
-    this.router.navigate(['/home']);
   }
 
   goBack(): void {

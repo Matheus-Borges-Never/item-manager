@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -27,6 +28,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
     MatButtonModule,
     MatIconModule,
     MatDividerModule,
+    MatProgressBarModule,
     MatSnackBarModule,
     MatDialogModule,
     FontAwesomeModule,
@@ -36,6 +38,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 })
 export class ItemDetailComponent implements OnInit {
   item: Item | undefined;
+  isLoading = false;
   faEdit = faEdit;
   faTrash = faTrash;
   faArrowLeft = faArrowLeft;
@@ -53,20 +56,29 @@ export class ItemDetailComponent implements OnInit {
     if (id) {
       this.loadItem(id);
     } else {
-      this.router.navigate(['/items']);
+      this.router.navigate(['/home']);
     }
   }
 
   loadItem(id: string): void {
-    this.itemService.getItemById(id).subscribe((item) => {
-      if (item) {
-        this.item = item;
-      } else {
-        this.snackBar.open('Item não encontrado!', 'Fechar', {
-          duration: 3000,
-        });
-        this.router.navigate(['/items']);
-      }
+    this.isLoading = true;
+    this.itemService.getItemById(id).subscribe({
+      next: (item) => {
+        if (item) {
+          this.item = item;
+        } else {
+          this.snackBar.open('Item não encontrado!', 'Fechar', {
+            duration: 3000,
+          });
+          this.router.navigate(['/home']);
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar item:', error);
+        this.isLoading = false;
+        this.router.navigate(['/home']);
+      },
     });
   }
 
@@ -89,19 +101,23 @@ export class ItemDetailComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && this.item) {
-        this.itemService.deleteItem(this.item.id);
-        this.snackBar.open('Item excluído com sucesso!', 'Fechar', {
-          duration: 3000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
+        this.isLoading = true;
+        this.itemService.deleteItem(this.item.id).subscribe({
+          next: () => {
+            this.isLoading = false;
+            this.router.navigate(['/home']);
+          },
+          error: (error: any) => {
+            console.error('Erro ao excluir item:', error);
+            this.isLoading = false;
+          },
         });
-        this.router.navigate(['/items']);
       }
     });
   }
 
   goBack(): void {
-    this.router.navigate(['/items']);
+    this.router.navigate(['/home']);
   }
 
   formatDate(date: Date): string {
