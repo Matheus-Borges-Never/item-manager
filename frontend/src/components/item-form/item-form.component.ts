@@ -134,10 +134,10 @@ export class ItemFormComponent implements OnInit {
       });
     }
 
-    this.router.navigate(['/items']);
+    this.router.navigate(['/home']);
   }
 
   goBack(): void {
-    this.router.navigate(['/items']);
+    this.router.navigate(['/home']);
   }
 }
