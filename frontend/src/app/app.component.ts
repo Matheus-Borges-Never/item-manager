@@ -7,23 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, MatIconModule],
-  template: `
-    <mat-toolbar color="primary">
-      <span>Item Manager</span>
-      <span class="spacer"></span>
-      <button mat-icon-button>
-        <mat-icon>account_circle</mat-icon>
-      </button>
-    </mat-toolbar>
-    <router-outlet></router-outlet>
-  `,
-  styles: [
-    `
-      .spacer {
-        flex: 1 1 auto;
-      }
-    `,
-  ],
+  imports: [RouterOutlet],
+  template: '<router-outlet></router-outlet>',
 })
 export class AppComponent {}

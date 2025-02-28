@@ -1,24 +1,24 @@
-<div class="auth-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Bem-vindo</mat-card-title>
-      <mat-card-subtitle>Faça login na sua conta</mat-card-subtitle>
+<div class="login-container">
+  <div class="login-card">
+    <mat-card-header class="center-content">
+      <mat-card-title>
+        <span class="logo-text">
+          <span class="bold">Icon</span>
+          <span class="green">Manager</span>
+        </span>
+      </mat-card-title>
     </mat-card-header>
+
     <mat-card-content>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="signInWithGoogle()"
-        [disabled]="loading"
-      >
-        <mat-icon svgIcon="google-logo"></mat-icon>
-        {{ loading ? "Carregando..." : "Entrar com Google" }}
-      </button>
-      <mat-progress-spinner
-        *ngIf="loading"
-        diameter="24"
-        mode="indeterminate"
-      ></mat-progress-spinner>
+      <div class="login-form">
+        <button
+          mat-raised-button
+          class="google-button full-width"
+          (click)="signInWithGoogle()"
+        >
+          <span>Continue com Google</span>
+        </button>
+      </div>
     </mat-card-content>
-  </mat-card>
+  </div>
 </div>

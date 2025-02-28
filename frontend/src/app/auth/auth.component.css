@@ -1,26 +1,70 @@
-.auth-container {
+@import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&display=swap");
+
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #f8f7f5;
+  padding: 16px;
 }
 
-mat-card {
-  max-width: 400px;
+.login-card {
+  max-width: 300px;
   width: 100%;
-  padding: 20px;
+  padding: 24px;
 }
 
-button {
-  width: 100%;
-  margin-top: 20px;
+.logo-text {
+  font-size: 44px;
+  font-weight: bold;
+  font-family: "League Spartan", sans-serif;
 }
 
-mat-icon {
-  margin-right: 8px;
+.bold {
+  color: black;
 }
 
-mat-progress-spinner {
-  margin: 20px auto 0;
+.green {
+  color: #2e7d32;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.google-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: white !important;
+  color: #2e7d32 !important;
+  border: 1px solid #dadce0;
+  height: 48px !important;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  width: 100% !important;
+  padding: 0 24px !important;
+  border-radius: 4px !important;
+  gap: 12px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.google-button:hover {
+  background-color: #f8f9fa !important;
+  border: 1px solid #2e7d32;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
+  padding: 30px 16px !important;
 }
