@@ -1,7 +1,6 @@
-import { Component, type OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,18 +9,19 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Item } from '../../models/item.model';
 import {
   faEdit,
   faTrash,
   faPlus,
   faEye,
 } from '@fortawesome/free-solid-svg-icons';
+
 import { ItemService } from '../../services/item.service';
-import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { Item } from '../../models/item.model';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-item-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -34,48 +34,27 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
     MatDialogModule,
     FontAwesomeModule,
   ],
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+  templateUrl: './item-list.component.html',
+  styleUrls: ['./item-list.component.css'],
 })
-export class HomeComponent implements OnInit {
+export class ItemListComponent implements OnInit {
   items: Item[] = [];
   faEdit = faEdit;
   faTrash = faTrash;
   faPlus = faPlus;
   faEye = faEye;
-  userName = '';
 
   constructor(
-    private router: Router,
     private itemService: ItemService,
+    private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {}
 
-  ngOnInit() {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        this.userName = user.displayName || 'Usuário';
-      } else {
-        this.router.navigate(['/login']);
-      }
-    });
-
+  ngOnInit(): void {
     this.itemService.getItems().subscribe((items) => {
       this.items = items;
     });
-  }
-
-  logout() {
-    const auth = getAuth();
-    signOut(auth)
-      .then(() => {
-        this.router.navigate(['/login']);
-      })
-      .catch((error) => {
-        console.error('Erro ao fazer logout:', error);
-      });
   }
 
   createItem(): void {

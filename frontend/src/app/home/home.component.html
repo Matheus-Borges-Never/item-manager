@@ -1,17 +1,81 @@
-<div class="home-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Bem-vindo, {{ userName }}!</mat-card-title>
-      <mat-card-subtitle>Esta é a sua página inicial.</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Aqui você pode gerenciar seus itens e configurações.</p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="warn" (click)="logout()">
-        <mat-icon>exit_to_app</mat-icon>
-        Sair
-      </button>
-    </mat-card-actions>
-  </mat-card>
+<div class="item-list-container">
+  <div class="header">
+    <mat-card-title>
+      <span class="logo-text">
+        <span class="bold">Item</span>
+        <span class="green">Manager</span>
+      </span>
+    </mat-card-title>
+    <button
+      mat-fab
+      color="primary"
+      (click)="createItem()"
+      class="add-button"
+      aria-label="Adicionar novo item"
+    >
+      <fa-icon [icon]="faPlus"></fa-icon>
+    </button>
+  </div>
+
+  <div *ngIf="items.length === 0" class="empty-state">
+    <mat-icon>inventory_2</mat-icon>
+    <h2>Nenhum item encontrado</h2>
+    <p>Clique no botão + para adicionar seu primeiro item</p>
+  </div>
+
+  <mat-grid-list
+    [cols]="getGridCols()"
+    rowHeight="1:1"
+    gutterSize="16px"
+    *ngIf="items.length > 0"
+  >
+    <mat-grid-tile *ngFor="let item of items">
+      <mat-card class="item-card">
+        <div class="item-image-container">
+          <img
+            *ngIf="item.imageUrl"
+            [src]="item.imageUrl"
+            alt="{{ item.name }}"
+            class="item-image"
+          />
+          <div *ngIf="!item.imageUrl" class="no-image">
+            <mat-icon>image</mat-icon>
+          </div>
+        </div>
+        <mat-card-content>
+          <h2>{{ item.name }}</h2>
+          <p class="description">
+            {{ item.description | slice : 0 : 100
+            }}{{ item.description.length > 100 ? "..." : "" }}
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="viewItem(item.id)"
+            aria-label="Ver detalhes"
+          >
+            <fa-icon [icon]="faEye"></fa-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="accent"
+            (click)="editItem(item.id)"
+            aria-label="Editar item"
+          >
+            <fa-icon [icon]="faEdit"></fa-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="deleteItem(item.id)"
+            aria-label="Excluir item"
+          >
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
 </div>

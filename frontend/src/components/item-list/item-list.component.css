@@ -86,20 +86,6 @@ mat-card-actions {
   padding: 8px 16px 16px;
 }
 
-.logo-text {
-  font-size: 44px;
-  font-weight: bold;
-  font-family: "League Spartan", sans-serif;
-}
-
-.bold {
-  color: black;
-}
-
-.green {
-  color: #2e7d32;
-}
-
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -134,3 +120,4 @@ mat-card-actions {
     padding: 10px;
   }
 }
+

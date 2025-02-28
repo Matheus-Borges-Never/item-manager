@@ -15,7 +15,6 @@ import { Observable } from 'rxjs';
 })
 export class AuthGuard implements CanActivate {
   constructor(private router: Router) {
-    // Inicializa o Firebase se ainda não estiver inicializado
     if (!getApps().length) {
       initializeApp(environment.firebaseConfig);
     }

@@ -1,0 +1,62 @@
+<div class="form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ isEditMode ? 'Editar Item' : 'Novo Item' }}</mat-card-title>
+    </mat-card-header>
+    
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" placeholder="Digite o nome do item">
+          <mat-error *ngIf="itemForm.get('name')?.hasError('required')">
+            Nome é obrigatório
+          </mat-error>
+          <mat-error *ngIf="itemForm.get('name')?.hasError('minlength')">
+            Nome deve ter pelo menos 3 caracteres
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput formControlName="description" rows="4" placeholder="Digite a descrição do item"></textarea>
+          <mat-error *ngIf="itemForm.get('description')?.hasError('required')">
+            Descrição é obrigatória
+          </mat-error>
+          <mat-error *ngIf="itemForm.get('description')?.hasError('minlength')">
+            Descrição deve ter pelo menos 10 caracteres
+          </mat-error>
+        </mat-form-field>
+        
+        <div class="image-upload-container">
+          <div class="image-preview" *ngIf="imagePreview">
+            <img [src]="imagePreview" alt="Preview">
+            <button type="button" mat-mini-fab color="warn" class="remove-image" (click)="removeImage()">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          
+          <div class="upload-button-container" *ngIf="!imagePreview">
+            <button type="button" mat-stroked-button color="primary" (click)="fileInput.click()">
+              <mat-icon>add_photo_alternate</mat-icon>
+              Adicionar Imagem
+            </button>
+            <input hidden type="file" #fileInput (change)="onFileSelected($event)" accept="image/*">
+          </div>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button type="button" mat-button (click)="goBack()">
+          <fa-icon [icon]="faArrowLeft"></fa-icon> Voltar
+        </button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="itemForm.invalid">
+          <fa-icon [icon]="faSave"></fa-icon> {{ isEditMode ? 'Atualizar' : 'Salvar' }}
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>
+
