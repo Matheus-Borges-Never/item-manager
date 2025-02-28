@@ -4,20 +4,79 @@
   margin: 0 auto;
 }
 
-.header {
+.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: #ffffff;
+  padding: 15px 20px;
   margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-.header h1 {
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 32px;
+  font-weight: bold;
+  font-family: "League Spartan", sans-serif;
+}
+
+.bold {
+  color: black;
+}
+
+.green {
   color: #2e7d32;
-  margin: 0;
 }
 
-.add-button {
-  background-color: #2e7d32;
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.add-button,
+.logout-btn {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.add-button fa-icon,
+.logout-btn mat-icon {
+  font-size: 18px;
+  line-height: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.logout-btn .btn-text {
+  display: none;
+}
+
+.btn-text {
+  margin-left: 4px;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: #2e7d32;
+  font-size: 24px;
+  cursor: pointer;
 }
 
 .item-card {
@@ -86,20 +145,6 @@ mat-card-actions {
   padding: 8px 16px 16px;
 }
 
-.logo-text {
-  font-size: 44px;
-  font-weight: bold;
-  font-family: "League Spartan", sans-serif;
-}
-
-.bold {
-  color: black;
-}
-
-.green {
-  color: #2e7d32;
-}
-
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -129,8 +174,52 @@ mat-card-actions {
   color: #666;
 }
 
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .navbar-actions {
+    display: none;
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 15px;
+    gap: 12px;
+  }
+
+  .navbar-actions.open {
+    display: flex;
+  }
+
+  .logo-text {
+    font-size: 28px;
+  }
+}
+
 @media (max-width: 599px) {
   .item-list-container {
     padding: 10px;
+  }
+
+  .navbar {
+    padding: 12px 15px;
+  }
+
+  .logo-text {
+    font-size: 24px;
+  }
+
+  .btn-text {
+    display: none;
+  }
+
+  .logout-btn {
+    min-width: 0;
+    padding: 0 8px;
   }
 }

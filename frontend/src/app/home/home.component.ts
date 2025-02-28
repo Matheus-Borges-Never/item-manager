@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
@@ -16,6 +16,7 @@ import {
   faTrash,
   faPlus,
   faEye,
+  faBars,
 } from '@fortawesome/free-solid-svg-icons';
 import { ItemService } from '../../services/item.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
@@ -43,8 +44,10 @@ export class HomeComponent implements OnInit {
   faTrash = faTrash;
   faPlus = faPlus;
   faEye = faEye;
+  faBars = faBars;
   userName = '';
   isLoading = false;
+  mobileMenuOpen = false;
 
   constructor(
     private router: Router,
@@ -65,6 +68,18 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  @HostListener('window:resize')
+  onResize() {
+    // Fechar o menu móvel quando redimensionar a tela para desktop
+    if (window.innerWidth > 768 && this.mobileMenuOpen) {
+      this.mobileMenuOpen = false;
+    }
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
   loadItems() {
     this.isLoading = true;
     this.itemService.getItems().subscribe({
@@ -75,6 +90,9 @@ export class HomeComponent implements OnInit {
       error: (error) => {
         console.error('Erro ao carregar itens:', error);
         this.isLoading = false;
+        this.snackBar.open('Erro ao carregar itens', 'Fechar', {
+          duration: 5000,
+        });
       },
     });
   }
@@ -87,6 +105,9 @@ export class HomeComponent implements OnInit {
       })
       .catch((error) => {
         console.error('Erro ao fazer logout:', error);
+        this.snackBar.open('Erro ao fazer logout', 'Fechar', {
+          duration: 5000,
+        });
       });
   }
 
@@ -116,9 +137,15 @@ export class HomeComponent implements OnInit {
         this.itemService.deleteItem(id).subscribe({
           next: () => {
             this.loadItems();
+            this.snackBar.open('Item excluído com sucesso', 'Fechar', {
+              duration: 3000,
+            });
           },
           error: (error: any) => {
             console.error('Erro ao excluir item:', error);
+            this.snackBar.open('Erro ao excluir item', 'Fechar', {
+              duration: 5000,
+            });
           },
         });
       }

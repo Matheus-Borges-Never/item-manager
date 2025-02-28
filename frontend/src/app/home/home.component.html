@@ -1,27 +1,42 @@
 <div class="item-list-container">
-  <div class="header">
-    <mat-card-title>
+  <nav class="navbar">
+    <div class="navbar-logo">
       <span class="logo-text">
         <span class="bold">Item</span>
         <span class="green">Manager</span>
       </span>
-    </mat-card-title>
+    </div>
+
     <button
-      mat-fab
-      color="primary"
-      (click)="createItem()"
-      class="add-button"
-      aria-label="Adicionar novo item"
+      class="mobile-menu-btn"
+      (click)="toggleMobileMenu()"
+      aria-label="Toggle menu"
     >
-      <fa-icon [icon]="faPlus"></fa-icon>
+      <fa-icon [icon]="faBars"></fa-icon>
     </button>
-    <mat-card-actions>
-      <button mat-raised-button color="warn" (click)="logout()">
-        <mat-icon>exit_to_app</mat-icon>
-        Sair
+
+    <div class="navbar-actions" [class.open]="mobileMenuOpen">
+      <button
+        mat-mini-fab
+        color="primary"
+        (click)="createItem()"
+        class="add-button"
+        aria-label="Adicionar novo item"
+      >
+        <fa-icon [icon]="faPlus"></fa-icon>
       </button>
-    </mat-card-actions>
-  </div>
+
+      <button
+        mat-mini-fab
+        color="warn"
+        (click)="logout()"
+        class="logout-btn"
+        aria-label="Sair"
+      >
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </div>
+  </nav>
 
   <div *ngIf="items.length === 0" class="empty-state">
     <mat-icon>inventory_2</mat-icon>
