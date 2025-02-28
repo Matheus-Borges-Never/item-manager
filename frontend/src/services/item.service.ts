@@ -5,12 +5,13 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { getAuth } from 'firebase/auth';
 import { Item } from '../models/item.model';
+import { environment } from '../environments/environments';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ItemService {
-  private apiUrl = 'http://localhost:3000/items';
+  private apiUrl = `${environment.baseUrl}/items`;
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
 
